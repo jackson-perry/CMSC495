@@ -32,9 +32,9 @@ jobs:
           python-version: '3.12'
       - name: setup venv
         run: |
-          python -m venv .venv
+          python3 -m venv .venv
           source .venv/bin/activate
-          pip install flask
+          pip install Flask
           pip install requests
       # Runs a single command using the runners shell
       - name: Run Python Script
