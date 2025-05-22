@@ -36,6 +36,7 @@ jobs:
           source .venv/bin/activate
           pip install Flask
           pip install requests
+          pip install python-dotenv
       # Runs a single command using the runners shell
       - name: Run Python Script
         run: |
