@@ -30,6 +30,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
+
+      - name: Set FLASK_ENV for production
+        run: echo "FLASK_ENV=production" >> $GITHUB_ENV
+
       - name: setup venv
         run: |
           python3 -m venv .venv

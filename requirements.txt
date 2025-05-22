@@ -90,7 +90,7 @@ requests-ntlm==1.1.0
 resolvelib==1.0.1
 rich==13.7.1
 s3transfer==0.10.1
-selinux @ file:///build/libselinux-IVxPh3/libselinux-3.5/src
+#selinux @ file:///build/libselinux-IVxPh3/libselinux-3.5/src
 service-identity==24.1.0
 setuptools==68.1.2
 simplejson==3.19.2
