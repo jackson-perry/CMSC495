@@ -26,8 +26,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
       # Runs a single command using the runners shell
       - name: Run Python Script
         run: |
+        source .venv/bin/activate
         python app.py
