@@ -43,5 +43,5 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run Flask App
         run: |
-          source .vev/bin/activate
+          source .venv/bin/activate
           python app.py
