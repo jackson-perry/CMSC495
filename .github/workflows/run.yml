@@ -33,4 +33,4 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run Python Script
         run: |
-        python src/app.py
+          python src/app.py
