@@ -34,10 +34,10 @@ jobs:
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install Flask
-          pip install requests
-          pip install python-dotenv
+          pip install --upgrde pip
+          pip install -r requirements.txt
       # Runs a single command using the runners shell
-      - name: Run Python Script
+      - name: Run Flask App
         run: |
-          python src/app.py
+          source .vev/bin/activate
+          python app.py
