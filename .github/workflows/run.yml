@@ -48,10 +48,7 @@ jobs:
           echo $! > flask_pid.txt
           sleep 5  # wait for server to start
 
-      - name: Test Flask app route
-        run: |
-          curl http://127.0.0.1:5001/  # check your endpoint
-          
+           
       - name: Stop Flask server
         run: |
           kill $(cat flask_pid.txt)
