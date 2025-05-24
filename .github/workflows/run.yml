@@ -41,7 +41,17 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
       # Runs a single command using the runners shell
-      - name: Run Flask App
+      - name: Start Flask server in background
         run: |
           source .venv/bin/activate
-          python app.py
+          FLASK_APP=src/app.py flask run --port=5000 &
+          echo $! > flask_pid.txt
+          sleep 5  # wait for server to start
+
+      - name: Test Flask app route
+        run: |
+          curl http://127.0.0.1:5000/  # replace with appropriate endpoint
+          
+      - name: Stop Flask server
+        run: |
+          kill $(cat flask_pid.txt)
