@@ -44,7 +44,7 @@ jobs:
       - name: Start Flask server in background
         run: |
           source .venv/bin/activate
-          FLASK_APP=src/app.py flask run --port=5000 &
+          FLASK_APP=src/app.py flask run &
           echo $! > flask_pid.txt
           sleep 5  # wait for server to start
 
