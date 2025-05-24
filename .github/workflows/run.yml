@@ -50,7 +50,7 @@ jobs:
 
       - name: Test Flask app route
         run: |
-          curl http://127.0.0.1:5000/  # replace with appropriate endpoint
+          curl http://127.0.0.1:5001/  # check your endpoint
           
       - name: Stop Flask server
         run: |
