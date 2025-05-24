@@ -9,4 +9,4 @@ Elizabeth Bloss
 Jonah Kiplimo
 Tyler Wade
 
-I set up a basic project, made an account with a currency PAI service and built a test flask app to call teh api at rpint the resaponse in a HTML page
+I set up a basic project, made an account with a currency PAI service and built a test flask app to call the api at print the resaponse in a HTML page
