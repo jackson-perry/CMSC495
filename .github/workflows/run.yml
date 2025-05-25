@@ -47,8 +47,8 @@ jobs:
           FLASK_APP=src/app.py flask run &
           echo $! > flask_pid.txt
           sleep 5  # wait for server to start
-
-           
-      - name: Stop Flask server
+      - name: Send SIGINT to Flask (like Ctrl+C)
         run: |
-          kill $(cat flask_pid.txt)
+          kill -SIGINT $(cat flask_pid.txt)
+           
+     
