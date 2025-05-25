@@ -37,7 +37,7 @@ jobs:
           echo $! > flask_pid.txt
           sleep 15
 
-      - name: Send SIGINT to Flask (like Ctrl+C)
-        run: kill -SIGINT $(cat flask_pid.txt)
+     # - name: Send SIGINT to Flask (like Ctrl+C)
+     #   run: kill -SIGINT $(cat flask_pid.txt)
       
      
