@@ -44,7 +44,7 @@ class CurrencyClient:
     def calculate(self):
         """calcultes teh conversion currenly only wokring for USD base"""
         url=f"https://openexchangerates.org/api/latest.json?app_id={self.app_id}&base={self.base_currency}&symbols={self.target_currency}&prettyprint=false&show_alternative=false"
-        response = requests.get(url, timout =8)
+        response = requests.get(url, timeout =8)
         if response.status_code ==200:
             data =response.json()["rates"][self.target_currency]*self.base_value
             return data
