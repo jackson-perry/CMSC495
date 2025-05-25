@@ -47,7 +47,7 @@ if not app_id:
     raise ValueError("Aapp_idis required but not set in environment variables.")
 
 #app_id = os.environ["app_id"]
-app = Flask(__name__)
+#app = Flask(__name__)
 
 def main():
     API = CurrencyClient(app_id)
