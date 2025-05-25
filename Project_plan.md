@@ -63,8 +63,10 @@ The currency conversion web application uses a GUI for users to convert
 a monetary amount. Users will input a numeric value, select a base
 currency, and select a conversion currency. After the desired values are
 input, a 'convert' button may be pressed and the converted numeric value
-will be displayed as output. The project will be delivered through
-{......................}
+will be displayed as output. The project will be delivered through a web
+application in a container.
+
+.
 
 PROJECT SCOPE
 
@@ -85,16 +87,46 @@ RESOURCE LIST
 Several resources will be utilized by the team to accomplish the task of
 creating the website:
 
-1)  Personal computers for programming ({Window OS/Linux ?\....})
+1)  Personal computers for programming linux/mac or Windows with
+    Docker/WSL
 
-2)  Web-based programming tool ({Visual Studio?})
+2)  IDE: Vscode
 
-3)  Version-controlled software (GitHub repository)
+3)  Python 3.12 and venv
 
-4)  Open source API for conversion rates ( such as
-    <https://moneymorph.dev/> )
+4)  Version-controlled software (GitHub repository)
 
-5)  Internet access (LAN/Wi-Fi is needed)
+5)  Open source API for conversion rates ( openexchangerates.org)
+
+6)  Internet access (LAN/Wi-Fi is needed)
+
+7)  libraries outlined in requirements.txt
+
+    a.  blinker==1.9.0
+
+    b.  certifi==2025.4.26
+
+    c.  charset-normalizer==3.4.2
+
+    d.  click==8.2.1
+
+    e.  Flask==3.1.1
+
+    f.  idna==3.10
+
+    g.  itsdangerous==2.2.0
+
+    h.  Jinja2==3.1.6
+
+    i.  MarkupSafe==3.0.2
+
+    j.  python-dotenv==1.1.0
+
+    k.  requests==2.32.3
+
+    l.  urllib3==2.4.0
+
+    m.  Werkzeug==3.1.3
 
 TEAM MEMBER ROLES
 
@@ -108,68 +140,261 @@ manager for group one is {......\....}
 
 **Programmer**
 
-These individuals are responsible for writing the code for the project.
-The program will be developed using Python and Flask. The team members
-that will focus on the backend programming are {.........}
+All team members can work together to ensure the function and logic of
+the tools algorithms as well as ensuring performance and safety of the
+application. This is to ensure that integration testing is performed as
+development happens and acceptance testing is thoroughly completed prior
+to delivery with a focus on security and accuracy.
 
 **User Interface Designer**
 
-These individuals are responsible for designing the graphical user
-interface for the project. The frontend of the program will be developed
-with {JavaScript or html ?}. The team members that will focus on this
-are {..........}
+These individuals are responsible for designing and layout of the
+graphical user interface for the project. The frontend of the program
+will be developed with HTML/CSS/tailwinds The team members that will
+focus on this are {..........}
 
 **Tester**
 
-All team members are to ensure that each section of the project
-functions as desired. Each team member will write test plans for the
-portion of the project that they are responsible for developing.
+All team members will serve as testers and complete a rigorous test plan
+as outlines by the Project manager. Sufficient assertion within the
+codebase is also desired. We will test for functionality and correctness
+but also for appropriate error handling and graceful failure
 
 REQUIREMENTS
 
-The project will have the following functional requirements:
+**Business Requirements**
 
--   Provide a GUI that allows users to convert a base amount to another
-    currency
+1.  Allow users to convert one currency to another in near real-time.
 
--   The program shall allow user to enter an initial numeric value
+-   Support popular global currencies (USD, EUR, GBP, INR, JPY, etc.).
 
--   The program shall allow user to select a base currency from a
-    dropdown menu
+```{=html}
+<!-- -->
+```
+-   Display accurate and up-to-date exchange rates.
 
--   The program shall allow user to select a desired currency from a
-    dropdown menu
+```{=html}
+<!-- -->
+```
+-   Ensure easy usability on both desktop and mobile devices.
 
--   The program shall validate user input
+```{=html}
+<!-- -->
+```
+-   Provide a secure and fast user experience to retain users.
 
--   The program shall only enable the 'convert' button once all
-    necessary input is validated
+**Functional Requirements**
 
--   The program shall display the accurate converted numeric value to
-    the user
+-   **Currency Selection**: User selects source and target currencies
+    > from dropdowns.
+
+```{=html}
+<!-- -->
+```
+-   **Input Field**: User inputs the amount to convert.
+
+```{=html}
+<!-- -->
+```
+-   **Conversion Calculation**: App retrieves current exchange rates and
+    > calculates the converted value.
+
+```{=html}
+<!-- -->
+```
+-   **Display Result**: Show converted amount clearly to the user.
+
+```{=html}
+<!-- -->
+```
+-   **Exchange Rate Source**: Integration with a reliable external API
+    > (e.g., [OpenExchangeRates](https://openexchangerates.org/)).
+
+```{=html}
+<!-- -->
+```
+-   **Auto-Refresh Rates**: Periodically update exchange rates (e.g.,
+    > every 10 mins or on demand).
+
+```{=html}
+<!-- -->
+```
+-   **Currency Symbol and Code Display**: Show symbols (\$, €, ₹) and
+    > ISO codes (USD, EUR, INR).
+
+```{=html}
+<!-- -->
+```
+-   **Mobile Responsiveness**: Ensure UI adapts well to various screen
+    > sizes.
+
+```{=html}
+<!-- -->
+```
+-   **Error Handling**: Display error messages for invalid inputs or
+    > failed API calls.
+
+```{=html}
+<!-- -->
+```
+-   **History (Optional)**: Maintain a list of recent conversions.
+
+```{=html}
+<!-- -->
+```
+-   **Localization (Optional)**: Support multiple languages or regional
+    > formats.
+
+**Technical Requirements**
+
+-   **Frontend**:
+
+    -   Language: HTML, CSS
+
+    -   /Tailwind
+
+-   **Backend** (if applicable):
+
+    -   Language: Python (Flask)
+
+    -   Use server-side code to call external currency exchange API
+
+-   **API Integration**:
+
+    -   Must fetch exchange rates from a real-time API.
+
+    -   Handle rate limits and API key security
+
+-   **Performance**:
+
+    -   Fast load times (\<2s on average internet)
+
+    -   Minimized API calls (cache responses where possible)
+
+-   **Security**:
+
+    -   Secure API keys (never expose them in frontend)
+
+    -   HTTPS for all data transmission
+
+    -   Input validation to prevent injection or malicious input
+
+-   **Hosting/Deployment**:
+
+    -   Use GitHub for version control
+
+-   **Browser Compatibility**:
+
+    -   Should work across major browsers (Chrome, Firefox, Safari,
+        > Edge)
 
 CASE SCENARIO
 
--   A user wants to convert an amount of money in USD to GBP
+**User Journey:**
 
-    -   The user types in the numeric value of the USD they desire to
-        convert
+**1. Launching the Application**
 
-    -   The user selects USD from the base currency dropdown menu
+-   The user opens the app and lands on the Welcome Screen.
 
-    -   The user selects GBP from the desired currency dropdown menu
+-   The screen displays a main menu with the following options:
 
-    -   The user clicks "Convert" button
+```{=html}
+<!-- -->
+```
+-   Currency Converter
 
-    -   The converted amount is displayed on the screen to the user
+-   Conversion History
 
--   Error checking scenarios include:
+-   Exit
 
-    -   Entering a non-numeric for the initial value to be converted
+    **2. Currency Conversion**
 
-    -   No selection for the base currency type
+-   The user selects the \"Currency Converter\" button.
 
-    -   No selection for the desired currency type
+-   The Currency Converter screen opens.
+
+-   They are presented with a clean Tailwind-styled form that includes:
+
+-   Input field to enter the amount (e.g., 100)
+
+-   Dropdown to select source currency (e.g., USD)
+
+-   Dropdown to select target currency (e.g., EUR)
+
+-   A "Convert" button
+
+-   The user enters the value 100, selects USD as the source and EUR as
+    the target, and clicks \"Convert\".
+
+-   The converted amount appears below the form:
+
+-   100 USD = 92.34 EUR (check via Api for correct rate at test time)
+
+-   The conversion is saved in the backend session as history.
+
+-   The user clicks \"Exit\" to return to the main menu.
+
+    **3. Conversion History**
+
+-   From the main menu, the user selects \"Conversion History\".
+
+-   A panel opens showing the last three conversions made in the current
+    session:
+
+    -   100 USD → 92.34 EUR
+
+    -   50 GBP → 63.12 USD
+
+    -   200 JPY → 1.30 EUR
+
+-   The user can click \"Print History\" to export the session log to
+    PDF or print using a local printer.
+
+-   The user returns to the main menu and selects \"Exit\" to close the
+    app.
+
+**4. Error Handling Scenarios:**
+
+-   Invalid Input -- Amount
+
+-   User enters a non-numeric amount (e.g., \"ten\")
+
+-   The system shows a Tailwind-styled error banner:
+
+-   Please enter a valid numeric amount.
+
+-   Invalid Currency Selection
+
+-   User enters a manually typed currency code not in the dropdown
+    (e.g., XYZ).
+
+-   Error message appears:
+
+-   XYZ\' is not a supported currency code.
+
+-   Empty Field Submission
+
+-   User clicks \"Convert\" without filling all fields.
+
+-   Red outlines appear on missing fields with a message:
+
+-   All fields are required to perform the conversion.
+
+-   API Failure / No Internet
+
+-   If the exchange rate API is down or there's no internet:
+
+-   Unable to retrieve exchange rates. Please try again later.
+
+**Success Criteria:**
+
+-   User can complete at least 3 conversions in one session.
+
+-   Conversions are saved temporarily in session memory.
+
+-   Tailwind ensures responsive layout on all devices.
+
+-   User receives clear error messages for all input errors.
 
 SCHEDULE SUMMARY
 
