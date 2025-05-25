@@ -58,11 +58,11 @@ def main():
     print(data)
 
 
-
+"""
 @app.route("/")
-def home():
+    def home():
 
-    return str(data)
+    return str(data)"""
 
 if __name__ == "__main__":
   #  app.run(debug=True, port=5001)
