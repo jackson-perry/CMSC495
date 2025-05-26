@@ -37,7 +37,29 @@ jobs:
           echo $! > flask_pid.txt
           sleep 15
 
-     # - name: Send SIGINT to Flask (like Ctrl+C)
-     #   run: kill -SIGINT $(cat flask_pid.txt)
+      - name: Stop Flask background server
+        if: always()
+        run: |
+          if [ -f flask_pid.txt ]; then
+            kill -SIGINT $(cat flask_pid.txt)
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+
       
      

@@ -1,5 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 .env
-.venv
+.venv/
 combined.crt
 PrivateKey.pem
 IntermediateBundle.crt
