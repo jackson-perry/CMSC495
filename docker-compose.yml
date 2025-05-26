@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  cmsc495:
+    image: ghcr.io/jackson-perry/cmsc495:v1.0.0
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - APP_ID=${APP_ID}   # Load this from a local .env or inject at runtime
