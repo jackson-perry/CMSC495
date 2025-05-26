@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+combined.crt
+PrivateKey.pem
+IntermediateBundle.crt
+jackson-perry.com_2025.crt
