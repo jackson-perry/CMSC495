@@ -32,21 +32,18 @@ class CurrencyClient:
         """sets the base currency"""
         self.base_currency=base
     def set_target_currency(self,target):
-        """sets teh target currency"""
+        """sets the target currency"""
         self.target_currency= target
    
    
-#this is only allowing USD base at the free subscription consider:
-        #UniRate
-        #FxFeed.io
-        #currencyAI
-        #national Bank of Ploan as alternatives
+#this is only allowing USD base at the free subscription
+  #fixed calls dollars to both currency and uses divison  
     def calculate(self):
-        """calcultes teh conversion currenly only wokring for USD base"""
-        url=f"https://openexchangerates.org/api/latest.json?app_id={self.app_id}&base={self.base_currency}&symbols={self.target_currency}&prettyprint=false&show_alternative=false"
+        """calcultes the conversion currenly only working for USD base"""
+        url=f"https://openexchangerates.org/api/latest.json?app_id={self.app_id}&base=USD&symbols={self.base_currency},{self.target_currency}&prettyprint=false&show_alternative=false"
         response = requests.get(url, timeout =8)
         if response.status_code ==200:
-            data =response.json()["rates"][self.target_currency]*self.base_value
+            data =(response.json()["rates"][self.target_currency]/response.json()["rates"][self.base_currency])*self.base_value
             return data
         else:
             return response.status_code
@@ -56,7 +53,7 @@ class CurrencyClient:
 app_id = os.getenv('app_id')  # This will work with both GitHub Secrets or .env
 
 if not app_id:
-    raise ValueError("Aapp_idis required but not set in environment variables.")
+    raise ValueError("app_id is required but not set in environment variables.")
 
 app_id = os.environ["app_id"]
 app = Flask(__name__)
