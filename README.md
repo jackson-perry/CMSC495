@@ -7,9 +7,9 @@ Carl Blocker
 Jackson Perry
 Elizabeth Bloss
 Jonah Kiplimo
-Tyler Wade
 
-I set up a basic project, made an account with a currency API service and built a test flask app tthat can calculte USD conversions to many currencies
+
+I set up a basic project, made an account with a currency API service and built a test flask app that can calculate USD conversions to many currencies
 
 to pull and run the coantainer locally:
 ```bash 
