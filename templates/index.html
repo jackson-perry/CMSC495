@@ -6,9 +6,30 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-100 text-gray-800 font-sans relative">
 
-    <div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <!-- History Button -->
+    <div class="absolute top-4 right-4 z-50">
+        <button id="menuButton" class="bg-gray-800 text-white px-4 py-2 rounded shadow hover:bg-gray-700">
+            🕒 History
+        </button>
+        <div id="historyMenu" class="hidden mt-2 bg-white border border-gray-300 rounded shadow-lg w-72 p-4 z-50">
+            <h2 class="text-lg font-semibold mb-2">Recent Conversions</h2>
+            <ul class="space-y-2 max-h-60 overflow-y-auto text-sm">
+                {% for item in history %}
+                    <li class="border-b pb-2">
+                        <div class="text-gray-500 text-xs">{{ item.time }}</div>
+                        {{ item.amount }} {{ item.base }} → <strong>{{ item.result }}</strong> {{ item.target }}
+                    </li>
+                {% else %}
+                    <li>No recent queries.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Converter Form -->
+    <div class="max-w-lg mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
         <h1 class="text-2xl font-bold mb-4 text-center">Currency Converter</h1>
 
         {% if error %}
@@ -21,7 +42,8 @@
             <div>
                 <label class="block font-medium mb-1">Amount:</label>
                 <input type="number" name="amount" step="0.01" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="{{ request.form.amount or '' }}">
             </div>
 
             <div>
@@ -29,9 +51,9 @@
                 <select name="base_currency"
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                     {% for code, name in currencies.items() %}
-                                <option value="{{ code }}" {% if code == request.form.base_currency or (not request.form.base_currency and code == 'USD') %}selected{% endif %}>
-                                    {{ name }}
-                                </option>
+                        <option value="{{ code }}" {% if code == request.form.base_currency or (not request.form.base_currency and code == 'USD') %}selected{% endif %}>
+                            {{ name }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
@@ -41,7 +63,9 @@
                 <select name="target_currency"
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                     {% for code, name in currencies.items() %}
-                        <option value="{{ code }}">{{ name }}</option>
+                        <option value="{{ code }}" {% if code == request.form.target_currency %}selected{% endif %}>
+                            {{ name }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
@@ -60,5 +84,22 @@
             </div>
         {% endif %}
     </div>
+
+    <!-- Toggle History Menu Script -->
+    <script>
+        const menuButton = document.getElementById("menuButton");
+        const historyMenu = document.getElementById("historyMenu");
+
+        menuButton.addEventListener("click", () => {
+            historyMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!menuButton.contains(event.target) && !historyMenu.contains(event.target)) {
+                historyMenu.classList.add("hidden");
+            }
+        });
+    </script>
 </body>
 </html>
+

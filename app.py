@@ -1,4 +1,6 @@
 import os
+from datetime import datetime, timezone
+from collections import deque
 from flask import Flask, request, render_template
 import requests
 from dotenv import load_dotenv
@@ -8,6 +10,7 @@ if os.getenv('FLASK_ENV') != 'production':  # Adjust this condition based on you
     load_dotenv()
 
 
+conversion_history = deque(maxlen=10) 
 class CurrencyClient:
     """this class makes the connection to the API and has methods to convert currencies"""
     def __init__(self, app_id):
@@ -15,7 +18,7 @@ class CurrencyClient:
         self.currency_list_url= "https://openexchangerates.org/api/currencies.json"
         self.base_currency= "USD"
         self.target_currency= "EUR"
-        self.currency_choices= {"USD": "US Dollaer", "EUR": "Euro"}
+        self.currency_choices= {"USD": "US Dollar", "EUR": "Euro"}
         self.base_value=0
     def set_base_value(self, value):
         """sets the base value for the currency being converted from"""
@@ -34,8 +37,6 @@ class CurrencyClient:
     def set_target_currency(self,target):
         """sets the target currency"""
         self.target_currency= target
-   
-   
 #this is only allowing USD base at the free subscription
   #fixed calls dollars to both currency and uses divison  
     def calculate(self):
@@ -43,8 +44,9 @@ class CurrencyClient:
         url=f"https://openexchangerates.org/api/latest.json?app_id={self.app_id}&base=USD&symbols={self.base_currency},{self.target_currency}&prettyprint=false&show_alternative=false"
         response = requests.get(url, timeout =8)
         if response.status_code ==200:
-            data =(response.json()["rates"][self.target_currency]/response.json()["rates"][self.base_currency])*self.base_value
-            return data
+            raw_data =response.json()
+            data=(raw_data["rates"][self.target_currency]/raw_data["rates"][self.base_currency])*self.base_value
+            return round(data,2)
         else:
             return response.status_code
             
@@ -55,7 +57,7 @@ app_id = os.getenv('app_id')  # This will work with both GitHub Secrets or .env
 if not app_id:
     raise ValueError("app_id is required but not set in environment variables.")
 
-app_id = os.environ["app_id"]
+#app_id = os.environ["app_id"]
 app = Flask(__name__)
 
 
@@ -103,16 +105,24 @@ def home():
             base = request.form["base_currency"]
             target = request.form["target_currency"]
             value = float(request.form["amount"])
-
             client.set_base_currency(base)
             client.set_target_currency(target)
             client.set_base_value(value)
             result = f"{value} {client.base_currency} is {client.calculate()} {client.target_currency}"
+            # Save query to history
+            conversion_history.appendleft({
+                "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+                "base": base,
+                "target": target,
+                "amount": value,
+                "result": result
+            })
+
         # clean up the exceptions needed 
         except Exception as e:
             error = str(e)
 
-    return render_template("index.html", currencies=client.currency_choices, result=result, error=error)
+    return render_template("index.html", currencies=client.currency_choices, result=result, error=error, history=conversion_history)
 
 
 
