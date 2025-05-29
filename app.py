@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timezone
 from collections import deque
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, render_template
 import requests
 from dotenv import load_dotenv
@@ -8,9 +9,56 @@ from dotenv import load_dotenv
 # Only load .env file when running locally (i.e., not on GitHub Actions)
 if os.getenv('FLASK_ENV') != 'production':  # Adjust this condition based on your setup
     load_dotenv()
-
-
+# Retrieve the `APP_ID` from environment variables (either GitHub Secrets or .env)
+app_id = os.getenv('app_id')  # This will work with both GitHub Secrets or .env
+pg_password= os.getenv("pg_password")
+pg_user=os.getenv('pg_user')
+pg_ip=os.getenv('pg_ip')
+DATABASE_URL= f"postgresql://{pg_user}:{pg_password}@{pg_ip}/currency_logs"
 conversion_history = deque(maxlen=10) 
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # optional, suppresses warnings
+db = SQLAlchemy(app)
+
+
+class VisitorLog(db.Model):
+    __tablename__ = 'visitor_logs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), default=datetime.now(timezone.utc))
+    ip_address = db.Column(db.Text)
+    user_agent = db.Column(db.Text)
+    referrer = db.Column(db.Text)
+    method = db.Column(db.Text)
+    path = db.Column(db.Text)
+    event_type = db.Column(db.Text)  # 'visit' or 'conversion'
+    base_currency = db.Column(db.Text)
+    target_currency = db.Column(db.Text)
+    amount = db.Column(db.Numeric)
+    converted = db.Column(db.Numeric)
+
+def log_event(event_type, base=None, target=None, amount=None, result=None):
+    try:
+        log = VisitorLog(
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent"),
+            referrer=request.referrer,
+            method=request.method,
+            path=request.path,
+            event_type=event_type,
+            base_currency=base,
+            target_currency=target,
+            amount=amount,
+            converted=result
+        )
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        print(f"[ERROR] Failed to log visitor event: {e}")
+        db.session.rollback()
+
 class CurrencyClient:
     """this class makes the connection to the API and has methods to convert currencies"""
     def __init__(self, app_id):
@@ -49,16 +97,11 @@ class CurrencyClient:
             return round(data,2)
         else:
             return response.status_code
-            
-    
-# Retrieve the `APP_ID` from environment variables (either GitHub Secrets or .env)
-app_id = os.getenv('app_id')  # This will work with both GitHub Secrets or .env
-
-if not app_id:
-    raise ValueError("app_id is required but not set in environment variables.")
-
-#app_id = os.environ["app_id"]
-app = Flask(__name__)
+          
+@app.before_request
+def log_visit():
+    if request.method == "GET":
+        log_event(event_type="visit")
 
 
 def main():
@@ -108,7 +151,17 @@ def home():
             client.set_base_currency(base)
             client.set_target_currency(target)
             client.set_base_value(value)
-            result = f"{value} {client.base_currency} is {client.calculate()} {client.target_currency}"
+            converted=client.calculate()
+            result = f"{value} {client.base_currency} is {converted} {client.target_currency}"
+            #log events
+            log_event(
+                event_type="conversion",
+                base=base,
+                target=target,
+                amount=value,
+                result=converted
+            )
+
             # Save query to history
             conversion_history.appendleft({
                 "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),

@@ -8,3 +8,5 @@ services:
     restart: unless-stopped
     environment:
       - APP_ID=${APP_ID}   # Load this from a local .env or inject at runtime
+      - DATABASE_URL=${DATABASE_URL}
+    
