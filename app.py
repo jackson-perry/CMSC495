@@ -38,11 +38,20 @@ class VisitorLog(db.Model):
     target_currency = db.Column(db.Text)
     amount = db.Column(db.Numeric)
     converted = db.Column(db.Numeric)
+def get_real_ip():
+    # Get IP from X-Forwarded-For if present, otherwise fallback to remote_addr
+    forwarded_for = request.headers.get('X-Forwarded-For', '')
+    if forwarded_for:
+        # X-Forwarded-For can contain multiple IPs, client IP is first
+        ip = forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.remote_addr
+    return ip
 
 def log_event(event_type, base=None, target=None, amount=None, result=None):
     try:
         log = VisitorLog(
-            ip_address=request.remote_addr,
+            ip_address=get_real_ip(),
             user_agent=request.headers.get("User-Agent"),
             referrer=request.referrer,
             method=request.method,
