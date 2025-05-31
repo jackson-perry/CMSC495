@@ -2,11 +2,27 @@ import os
 from flask import Flask, request, render_template
 import requests
 from dotenv import load_dotenv
+import sqlite3 
 
 # Only load .env file when running locally (i.e., not on GitHub Actions)
 if os.getenv('FLASK_ENV') != 'production':  # Adjust this condition based on your setup
     load_dotenv()
 
+######### TEST DATABASE ##################################
+#connect to the SQLite database
+connect = sqlite3.connect('countries.db')
+cursor = connect.cursor()
+
+#retrieve all countries
+cursor.execute('Select name, iso_alpha2, currency_code, currency_name, currency_symbol FROM countries')
+countries = cursor.fetchall()
+
+#Print the country info
+for country in countries:
+    print(country)
+
+connect.close()
+###########################################################
 
 class CurrencyClient:
     """this class makes the connection to the API and has methods to convert currencies"""
