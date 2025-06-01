@@ -2,10 +2,9 @@
 import os
 import json
 import base64
-from flask import Flask
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from models import db, Country
-
-app = Flask(__name__)
 
 # Configure your PostgreSQL URI
 pg_password = os.getenv("pg_password")
@@ -14,7 +13,14 @@ pg_ip = os.getenv("pg_ip")
 DATABASE_URL = f"postgresql://{pg_user}:{pg_password}@{pg_ip}/currency_logs"
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
-db.init_app(app)
+# Create an engine to connect to the PostgreSQL database
+engine = create_engine(DATABASE_URL)
+
+# Create a configured "Session" class
+Session = sessionmaker(bind=engine)
+
+# Create a session to interact with the DB
+session = Session()
 
 with app.app_context():
     db.create_all()  # Ensures the countries table exists

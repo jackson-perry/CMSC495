@@ -1,5 +1,6 @@
 # currency/client.py
 import requests
+from models import db, Country
 
 class CurrencyClient:
     """this class makes the connection to the API and has methods to convert currencies"""
@@ -10,14 +11,16 @@ class CurrencyClient:
         self.target_currency= "EUR"
         self.currency_choices= {"USD": "US Dollar", "EUR": "Euro"}
         self.base_value=0
+        self.get_currency_choices_from_db()
     def set_base_value(self, value):
         """sets the base value for the currency being converted from"""
         self.base_value=value
-    def get_currency_choices_from_db():
-        choices = {}
+    def get_currency_choices_from_db(self):
+        """gets the currency choices form the PG db"""
+        db_choices = {}
         for country in Country.query.all():
-            choices[country.currency_code] = country.currency_name
-        return choices        
+            db_choices[country.currency_code] = country.currency_name
+        self.currency_choices=db_choices       
     def get_currency_choices(self):
         """retrieves all the currency choices avaible at the endpoint"""
         response = requests.get(self.currency_list_url, timeout =8)
