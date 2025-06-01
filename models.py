@@ -19,3 +19,14 @@ class VisitorLog(db.Model):
     target_currency = db.Column(db.Text)
     amount = db.Column(db.Numeric)
     converted = db.Column(db.Numeric)
+
+class Country(db.Model):
+    __tablename__ = 'countries'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    iso_alpha2 = db.Column(db.String(2), nullable=False)
+    currency_name = db.Column(db.String, nullable=False)
+    currency_code = db.Column(db.String(3), nullable=False)
+    currency_symbol = db.Column(db.String(10), nullable=False)
+    flag = db.Column(db.LargeBinary, nullable=False)  # Stores binary flag image
