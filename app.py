@@ -112,6 +112,11 @@ def log_visit():
     if request.method == "GET":
         log_event(event_type="visit")
 
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    """Clean up the database session after each request."""
+    db.session.remove()
+
 
 def main():
     """This is an api test function it is run wehn code is uploaded to github to test logic not for users"""    
