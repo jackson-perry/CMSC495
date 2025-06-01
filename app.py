@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from collections import deque
 from flask import Flask, request, render_template
 from dotenv import load_dotenv
-from models import db
-from utils.logging import log_event
+from models.models import db
+from utils.currency_logging import log_event
 from currency.client import CurrencyClient
 
 # Only load .env file when running locally (i.e., not on GitHub Actions)
@@ -30,11 +30,10 @@ db.init_app(app)
 
 
 # Initialize client and get currency list
-client = CurrencyClient(app_id)
-client.get_currency_choices()
+with app.app_context():
+    client = CurrencyClient(app_id)
+#client.get_currency_choices()
 
-  
-          
 @app.before_request
 def log_visit():
     """log user visits to page /"""
@@ -66,7 +65,10 @@ def main():
     print(f"{API.base_value} {base_label} is {data} {target_label}")
 
 
-
+@app.route("/test")
+def test_route():
+    print("Test route accessed")
+    return "Test successful"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -83,7 +85,10 @@ def home():
     """
     result = None
     error = None
-
+    currencies = client.currency_choices
+    flags = client.currency_flags
+    print(currencies.get('USD')) 
+    #print("flags" , flags)
     if request.method == "POST":
         try:
             base = request.form["base_currency"]
@@ -116,7 +121,7 @@ def home():
         except Exception as e:
             error = str(e)
 
-    return render_template("index.html", currencies=client.currency_choices, result=result, error=error, history=conversion_history)
+    return render_template("index.html", currencies=currencies, flags=flags, result=result, error=error, history=conversion_history)
 
 
 

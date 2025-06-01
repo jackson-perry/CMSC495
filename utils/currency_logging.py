@@ -1,5 +1,5 @@
 from flask import request
-from models import VisitorLog, db
+from models.models import VisitorLog, db
 
 
 def get_real_ip():
