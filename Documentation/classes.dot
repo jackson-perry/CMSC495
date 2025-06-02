@@ -1,0 +1,7 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+"CMSC495.models.models.Country" [color="black", fontcolor="black", label=<{Country|currency_code<br ALIGN="LEFT"/>currency_name<br ALIGN="LEFT"/>currency_symbol<br ALIGN="LEFT"/>flag<br ALIGN="LEFT"/>id<br ALIGN="LEFT"/>iso_alpha2<br ALIGN="LEFT"/>name<br ALIGN="LEFT"/>|}>, shape="record", style="solid"];
+"CMSC495.currency.client.CurrencyClient" [color="black", fontcolor="black", label=<{CurrencyClient|app_id<br ALIGN="LEFT"/>base_currency : str<br ALIGN="LEFT"/>base_value : int<br ALIGN="LEFT"/>currency_choices : dict<br ALIGN="LEFT"/>currency_flags : dict<br ALIGN="LEFT"/>currency_list_url : str<br ALIGN="LEFT"/>target_currency : str<br ALIGN="LEFT"/>|calculate()<br ALIGN="LEFT"/>get_currency_choices()<br ALIGN="LEFT"/>get_currency_choices_from_db()<br ALIGN="LEFT"/>set_base_currency(base)<br ALIGN="LEFT"/>set_base_value(value)<br ALIGN="LEFT"/>set_target_currency(target)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"CMSC495.models.models.VisitorLog" [color="black", fontcolor="black", label=<{VisitorLog|amount<br ALIGN="LEFT"/>base_currency<br ALIGN="LEFT"/>converted<br ALIGN="LEFT"/>event_type<br ALIGN="LEFT"/>id<br ALIGN="LEFT"/>ip_address<br ALIGN="LEFT"/>method<br ALIGN="LEFT"/>path<br ALIGN="LEFT"/>referrer<br ALIGN="LEFT"/>target_currency<br ALIGN="LEFT"/>timestamp<br ALIGN="LEFT"/>user_agent<br ALIGN="LEFT"/>|}>, shape="record", style="solid"];
+}

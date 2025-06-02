@@ -1,0 +1,18 @@
+digraph "packages" {
+rankdir=BT
+charset="utf-8"
+"CMSC495" [color="black", label=<CMSC495>, shape="box", style="solid"];
+"CMSC495.app" [color="black", label=<CMSC495.app>, shape="box", style="solid"];
+"CMSC495.currency" [color="black", label=<CMSC495.currency>, shape="box", style="solid"];
+"CMSC495.currency.client" [color="black", label=<CMSC495.currency.client>, shape="box", style="solid"];
+"CMSC495.gunicorn_config" [color="black", label=<CMSC495.gunicorn_config>, shape="box", style="solid"];
+"CMSC495.models" [color="black", label=<CMSC495.models>, shape="box", style="solid"];
+"CMSC495.models.models" [color="black", label=<CMSC495.models.models>, shape="box", style="solid"];
+"CMSC495.utils" [color="black", label=<CMSC495.utils>, shape="box", style="solid"];
+"CMSC495.utils.create_flag_png" [color="black", label=<CMSC495.utils.create_flag_png>, shape="box", style="solid"];
+"CMSC495.utils.currency_logging" [color="black", label=<CMSC495.utils.currency_logging>, shape="box", style="solid"];
+"CMSC495.utils.seed_countries_db" [color="black", label=<CMSC495.utils.seed_countries_db>, shape="box", style="solid"];
+"CMSC495.app" -> "CMSC495.currency.client" [arrowhead="open", arrowtail="none"];
+"CMSC495.app" -> "CMSC495.models.models" [arrowhead="open", arrowtail="none"];
+"CMSC495.app" -> "CMSC495.utils.currency_logging" [arrowhead="open", arrowtail="none"];
+}

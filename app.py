@@ -3,9 +3,12 @@ from datetime import datetime, timezone
 from collections import deque
 from flask import Flask, request, render_template
 from dotenv import load_dotenv
-from models.models import db
+from flask import g
+from models.models import db, Country
 from utils.currency_logging import log_event
 from currency.client import CurrencyClient
+
+
 
 # Only load .env file when running locally (i.e., not on GitHub Actions)
 if os.getenv('FLASK_ENV') != 'production':  # Adjust this condition based on your setup
@@ -20,13 +23,20 @@ pg_user=os.getenv('pg_user')
 pg_ip=os.getenv('pg_ip')
 DATABASE_URL= f"postgresql://{pg_user}:{pg_password}@{pg_ip}/currency_logs"
 
-
 conversion_history = deque(maxlen=10) 
-
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # optional, suppresses warnings
 db.init_app(app)
+
+def get_countries():
+    if 'countries' not in g:
+        try:
+            g.countries = Country.query.order_by(Country.name).all()
+        except Exception as e:
+            app.logger.warning(f"Could not retrieve countries: {e}")
+            g.countries = []
+    return g.countries
 
 
 # Initialize client and get currency list
@@ -85,10 +95,21 @@ def home():
     """
     result = None
     error = None
-    currencies = client.currency_choices
-    flags = client.currency_flags
-    print(currencies.get('USD')) 
-    #print("flags" , flags)
+    #currencies = client.currency_choices
+    #flags = client.currency_flags
+    # Use database for dropdown labels and flags
+    countries = get_countries()
+    currency_options = [
+        {
+            "code": c.currency_code,
+            "label": f"{c.name} {c.currency_name} ({c.currency_code})",
+            "flag": c.flag
+        }
+        for c in countries
+    ]
+
+    flags = {c.currency_code: c.flag for c in countries}
+
     if request.method == "POST":
         try:
             base = request.form["base_currency"]
@@ -100,13 +121,17 @@ def home():
             converted=client.calculate()
             result = f"{value} {client.base_currency} is {converted} {client.target_currency}"
             #log events
-            log_event(
-                event_type="conversion",
-                base=base,
-                target=target,
-                amount=value,
-                result=converted
-            )
+            
+            try:
+                log_event(
+                    event_type="conversion",
+                    base=base,
+                    target=target,
+                    amount=value,
+                    result=converted
+                )
+            except Exception:
+                 error = "⚠️ We were unable to log your activity, but your conversion was successful."
 
             # Save query to history
             conversion_history.appendleft({
@@ -121,7 +146,32 @@ def home():
         except Exception as e:
             error = str(e)
 
-    return render_template("index.html", currencies=currencies, flags=flags, result=result, error=error, history=conversion_history)
+    return render_template("index.html", currencies=currency_options, flags=flags, result=result, error=error, history=conversion_history)
+@app.route("/flag-preview", methods=["POST"])
+def flag_preview():
+    code = request.form.get("base_currency", "USD")
+    country = next((c for c in get_countries() if c.currency_code == code), None)
+    flags = client.currency_flags
+    flag = flags.get(code, "")
+    if country:
+        label = f"{country.name} {country.currency_name}"
+    else:
+        label = f"Unknown ({code})"
+    return render_template("partials/flag_preview.html", code=code, name=label, flag=flag)
+@app.route("/target-flag-preview", methods=["POST"])
+def target_flag_preview():
+    code = request.form.get("target_currency", "EUR")
+    country = next((c for c in get_countries() if c.currency_code == code), None)
+    flags = client.currency_flags
+    code = request.form.get("target_currency", "EUR")
+    flag = flags.get(code, "")
+    if country:
+        label = f"{country.name} {country.currency_name}"
+    
+    else:
+        label = f"Unknown ({code})"
+    
+    return render_template("partials/flag_preview.html", code=code, name=label, flag=flag)
 
 
 

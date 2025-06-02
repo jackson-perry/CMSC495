@@ -27,7 +27,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Read the JSON data from the file
-with open('templates/countries.json', 'r', encoding='utf-8') as f:
+with open('static/countries.json', 'r', encoding='utf-8') as f:
     countries_data = json.load(f)
 
 # Iterate over each country in the JSON data
