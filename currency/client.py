@@ -7,13 +7,14 @@ class CurrencyClient:
     """this class makes the connection to the API and has methods to convert currencies"""
     def __init__(self, app_id):
         self.app_id = app_id
-        self.currency_list_url= "https://openexchangerates.org/api/currencies.json"
-        self.base_currency= "USD"
-        self.target_currency= "EUR"
-        self.currency_choices= {"USD": "US Dollar", "EUR": "Euro"}
-        self.currency_flags={}
-        self.base_value=0
-        self.get_currency_choices_from_db()
+        self.currency_list_url = "https://openexchangerates.org/api/currencies.json"
+        self.base_currency = "USD"
+        self.target_currency = "EUR"
+        self.currency_choices = {"USD": "US Dollar", "EUR": "Euro"}
+        self.currency_flags = {}
+        self.base_value = 0
+        # Do NOT call this by default
+        # self.get_currency_choices_from_db()
     def set_base_value(self, value):
         """sets the base value for the currency being converted from"""
         self.base_value=value

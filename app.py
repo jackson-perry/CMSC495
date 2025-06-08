@@ -22,9 +22,8 @@ pg_password= os.getenv("pg_password")
 pg_user=os.getenv('pg_user')
 pg_ip=os.getenv('pg_ip')
 DATABASE_URL= f"postgresql://{pg_user}:{pg_password}@{pg_ip}/currency_logs"
-
-conversion_history = deque(maxlen=10) 
-
+client = None
+conversion_history = deque(maxlen=10)
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # optional, suppresses warnings
 db.init_app(app)
@@ -39,16 +38,25 @@ def get_countries():
     return g.countries
 
 
-# Initialize client and get currency list
-with app.app_context():
-    client = CurrencyClient(app_id)
-#client.get_currency_choices()
+def get_client():
+    global client
+    if client is None:
+        client = CurrencyClient(app_id)
+    return client
+
 
 @app.before_request
-def log_visit():
-    """log user visits to page /"""
-    if request.method == "GET":
+def handle_before_request():
+    if not hasattr(g, "_currency_preloaded"):
+        try:
+            get_client().get_currency_choices_from_db()
+        except Exception as e:
+            app.logger.warning(f"Failed to preload currency data: {e}")
+        g._currency_preloaded = True
+
+    if request.method == "GET" and request.path == "/":
         log_event(event_type="visit")
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -98,6 +106,7 @@ def home():
     #currencies = client.currency_choices
     #flags = client.currency_flags
     # Use database for dropdown labels and flags
+    currency_client = get_client()
     countries = get_countries()
     currency_options = [
         {
@@ -115,11 +124,11 @@ def home():
             base = request.form["base_currency"]
             target = request.form["target_currency"]
             value = float(request.form["amount"])
-            client.set_base_currency(base)
-            client.set_target_currency(target)
-            client.set_base_value(value)
-            converted=client.calculate()
-            result = f"{value} {client.base_currency} is {converted} {client.target_currency}"
+            currency_client.set_base_currency(base)
+            currency_client.set_target_currency(target)
+            currency_client.set_base_value(value)
+            converted=currency_client.calculate()
+            result = f"{value} {currency_client.base_currency} is {converted} {currency_client.target_currency}"
             #log events
             
             try:
@@ -148,10 +157,12 @@ def home():
 
     return render_template("index.html", currencies=currency_options, flags=flags, result=result, error=error, history=conversion_history)
 @app.route("/flag-preview", methods=["POST"])
+
 def flag_preview():
+    currency_client = get_client()
     code = request.form.get("base_currency", "USD")
     country = next((c for c in get_countries() if c.currency_code == code), None)
-    flags = client.currency_flags
+    flags = currency_client.currency_flags
     flag = flags.get(code, "")
     if country:
         label = f"{country.name} {country.currency_name}"
@@ -159,11 +170,12 @@ def flag_preview():
         label = f"Unknown ({code})"
     return render_template("partials/flag_preview.html", code=code, name=label, flag=flag)
 @app.route("/target-flag-preview", methods=["POST"])
+
 def target_flag_preview():
+    currency_client = get_client()
     code = request.form.get("target_currency", "EUR")
     country = next((c for c in get_countries() if c.currency_code == code), None)
-    flags = client.currency_flags
-    code = request.form.get("target_currency", "EUR")
+    flags = currency_client.currency_flags
     flag = flags.get(code, "")
     if country:
         label = f"{country.name} {country.currency_name}"
