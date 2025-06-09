@@ -14,7 +14,7 @@ class CurrencyClient:
         self.currency_flags = {}
         self.base_value = 0
         # Do NOT call this by default
-        # self.get_currency_choices_from_db()
+        #self.get_currency_choices_from_db()
     def set_base_value(self, value):
         """sets the base value for the currency being converted from"""
         self.base_value=value
