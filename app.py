@@ -1,4 +1,5 @@
 import os
+import base64
 from datetime import datetime, timezone
 from collections import deque
 from flask import Flask, request, render_template
@@ -29,6 +30,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # optional, suppresses war
 db.init_app(app)
 
 def get_countries():
+    """retrieve anc cache countries form database"""
     if 'countries' not in g:
         try:
             g.countries = Country.query.order_by(Country.name).all()
@@ -39,6 +41,7 @@ def get_countries():
 
 
 def get_client():
+    """initate a client"""
     global client
     if client is None:
         client = CurrencyClient(app_id)
@@ -47,6 +50,7 @@ def get_client():
 
 @app.before_request
 def handle_before_request():
+    """inital setup of client session before users pick anything"""
     if not hasattr(g, "_currency_preloaded"):
         try:
             get_client().get_currency_choices_from_db()
@@ -63,28 +67,9 @@ def shutdown_session(exception=None):
     """Clean up the database session after each request."""
     db.session.remove()
 
-
-def main():
-    """This is an api test function it is run wehn code is uploaded to github to test logic not for users"""    
-    API = CurrencyClient(app_id)
-    API.get_currency_choices()
-    base = "GBP"
-    assert base in API.currency_choices.keys(), "base currency not found in currency choices"
-    base_label = API.currency_choices[base]
-    target = "NZD"
-    assert target in API.currency_choices.keys(), "target currency not found in currency choices"
-    target_label = API.currency_choices[target]
-    value = 5000
-    assert isinstance(value, (int, float, complex)), "Variable is not numeric!"
-    API.set_base_currency(base)
-    API.set_target_currency(target)
-    API.set_base_value(value)
-    data = API.calculate()
-    print(f"{API.base_value} {base_label} is {data} {target_label}")
-
-
 @app.route("/test")
 def test_route():
+    """simple test route to see if server is up"""
     print("Test route accessed")
     return "Test successful"
 
@@ -117,7 +102,11 @@ def home():
         for c in countries
     ]
 
-    flags = {c.currency_code: c.flag for c in countries}
+    flags = {
+        c.currency_code: base64.b64encode(c.flag).decode("utf-8")
+        for c in countries
+}
+
 
     if request.method == "POST":
         try:
@@ -159,6 +148,7 @@ def home():
 @app.route("/flag-preview", methods=["POST"])
 
 def flag_preview():
+    """create a flag icon for the source currencyfrom base64 encoded databse entry"""
     currency_client = get_client()
     code = request.form.get("base_currency", "USD")
     country = next((c for c in get_countries() if c.currency_code == code), None)
@@ -172,6 +162,7 @@ def flag_preview():
 @app.route("/target-flag-preview", methods=["POST"])
 
 def target_flag_preview():
+    """create a flag icon for the target currencyfrom base64 encoded databse entry"""
     currency_client = get_client()
     code = request.form.get("target_currency", "EUR")
     country = next((c for c in get_countries() if c.currency_code == code), None)
@@ -188,8 +179,7 @@ def target_flag_preview():
 
 
 if __name__ == "__main__":
- 
-    if os.getenv('FLASK_ENV') == 'production':
-        main()
-    else:
-        app.run(debug=True, port=5001)
+
+    with app.app_context():
+        db.create_all() 
+    app.run(debug=True, port=5001)

@@ -15,7 +15,44 @@ to pull and run the coantainer locally:
 ```bash 
 docker pull ghcr.io/jackson-perry/cmsc495:latest
 ```
+you must create a postgress database called currency_logs
 
+then create the scehmas;
+
+ ```sql
+ CREATE TABLE visitor_logs (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ DEFAULT NOW(),
+    ip_address TEXT,
+    user_agent TEXT,
+    referrer TEXT,
+    method TEXT,
+    path TEXT,
+    event_type TEXT,
+    base_currency TEXT,
+    target_currency TEXT,
+    amount NUMERIC,
+    converted NUMERIC
+);
+```
+and 
+```sql
+CREATE TABLE visitor_logs (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ DEFAULT NOW(),
+    ip_address TEXT,
+    user_agent TEXT,
+    referrer TEXT,
+    method TEXT,
+    path TEXT,
+    event_type TEXT,
+    base_currency TEXT,
+    target_currency TEXT,
+    amount NUMERIC,
+    converted NUMERIC
+);
+
+```
 
 to run the container create a .env file with:
 
