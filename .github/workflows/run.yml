@@ -11,8 +11,7 @@ permissions:
   contents: read
   packages: write
 
-
-env: 
+env:
   app_id: ${{ secrets.APP_ID }}
 
 jobs:
@@ -27,27 +26,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Set FLASK_ENV for production
-        run: echo "FLASK_ENV=production" >> $GITHUB_ENV
-
-      - name: Create and set up virtual environment
+      - name: Install dependencies
         run: |
           python3 -m venv .venv
           .venv/bin/pip install --upgrade pip
           .venv/bin/pip install -r requirements.txt
 
-      - name: Start Flask server in background
+      - name: Run tests
         run: |
-          FLASK_APP=app.py .venv/bin/flask run &
-          echo $! > flask_pid.txt
-          sleep 15
-
-      - name: Stop Flask background server
-        if: always()
-        run: |
-          if [ -f flask_pid.txt ]; then
-            kill -SIGINT $(cat flask_pid.txt)
-          fi
+          .venv/bin/python -m pytest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -65,7 +52,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/cmsc495:latest
-
 
 
 
