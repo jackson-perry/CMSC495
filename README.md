@@ -68,10 +68,6 @@ docker compose up -d
 or run from the command line as
 
 ```bash
-docker run -p 8080:8080 \
-  -e APP_ID=your-api-key-here \
-  pg_password=<pg password>
-  pg_user=currencyuser
-  pg_ip=<ip>:5432
-  ghcr.io/jackson-perry/cmsc495:latest
+docker run -p 8080:8080 --env-file .env ghcr.io/jackson-perry/cmsc495:latest
+
 ```
