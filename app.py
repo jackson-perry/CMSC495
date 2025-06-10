@@ -36,7 +36,7 @@ def create_app(test_config=None):
     conversion_history = deque(maxlen=10)
 
     def get_countries():
-        """retrieve anc cache countries form database"""
+        """retrieve and cache countries from database"""
         if 'countries' not in g:
             try:
                 g.countries = Country.query.order_by(Country.name).all()

@@ -3087,7 +3087,7 @@
         "isoAlpha3": "ZMB",
         "isoNumeric": 894,
         "currency": {
-            "code": "ZMK",
+            "code": "ZMW",
             "name": "Kwacha",
             "symbol": "ZK"
         },
@@ -3100,7 +3100,7 @@
         "isoAlpha3": "ZWE",
         "isoNumeric": 716,
         "currency": {
-            "code": "ZWD",
+            "code": "ZWL",
             "name": "Dollar",
             "symbol": "Z$"
         },
