@@ -21,18 +21,11 @@ class CurrencyClient:
     def get_currency_choices_from_db(self):
         """gets the currency choices from the PG db"""
         db_choices = {}
-        flags_by_iso = {}
         for country in Country.query.all():
             flag_base64 = base64.b64encode(country.flag).decode('utf-8')
             db_choices[country.currency_code] = country.currency_name
             self.currency_flags[country.currency_code] = flag_base64 
-
-            # Key the flags by the 2-character ISO country code
-            flags_by_iso[country.iso_alpha2] = flag_base64
-
-        self.currency_choices=db_choices  
-
-        self.currency_flags = flags_by_iso     
+        self.currency_choices=db_choices       
     def get_currency_choices(self):
         """retrieves all the currency choices avaible at the endpoint"""
         response = requests.get(self.currency_list_url, timeout =8)
