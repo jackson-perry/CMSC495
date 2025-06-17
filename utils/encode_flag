@@ -1,0 +1,19 @@
+from PIL import Image
+import base64
+from io import BytesIO
+
+def png_to_base64_png(file_path, output_size=(32, 32)):
+    """
+    Loads a PNG image, resizes it, and returns a base64-encoded PNG.
+    """
+    with Image.open(file_path) as img:
+        img = img.convert("RGBA")
+        img = img.resize(output_size)
+
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
+x= png_to_base64_png("/home/jackson/UMGC/CMSC495/CMSC495/Flag_of_Eastern_Caribean.png")
+print(x)
