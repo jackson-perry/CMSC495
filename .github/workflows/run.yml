@@ -31,7 +31,10 @@ jobs:
           .venv/bin/pip install -r requirements.txt
 
       - name: Run Tests
-        run: pytest
+        run: |
+          .venv/bin/pip install pytest  
+          source .venv/bin/activate
+          pytest tests/
   
 
       - name: Set up Docker Buildx
