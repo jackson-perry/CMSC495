@@ -32,6 +32,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          .venv/bin/pip install pytest  
           source .venv/bin/activate
           pytest tests/
   
